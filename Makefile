@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0
 SRC	:= issort.c
+SRC	+= slist.c
 OBJ	:= $(patsubst %.c,%.o,$(SRC))
 TEST	:= $(patsubst %.c,%_test,$(SRC))
 TESTOBJ	+= $(patsubst %,%.o,$(TEST))
@@ -7,9 +8,9 @@ CFLAGS	+= -Wall -Werror
 .PHONY: all test clean
 all: $(TEST) test
 $(TEST): $(OBJ) $(TESTOBJ)
-	@$(CC) $(CFLAGS) -o $@ $@.o $(OBJ)
-%.o: %.c
-	@$(CC) $(CFLAGS) -o $@ -c $^
+	$(CC) $(CFLAGS) -o $@ $@.o $(OBJ)
+%.o: %.c %.h
+	$(CC) $(CFLAGS) -o $@ -c $<
 test: $(TEST)
 	@for t in $(TEST);                      \
 	do                                      \
