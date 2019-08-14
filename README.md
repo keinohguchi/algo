@@ -2,14 +2,14 @@
 
 ## Programs
 
-- [issort.c]: Insertion sort
+- [issort.c]: Insertion sort example
   - [issort_test.c]: [issort.c] unit test
-- [slist.c]: Singly linked list
-  - [slist_test.c]: [slist.c] unit test
+- [list.c]: Singly linked list example
+  - [list_test.c]: [list.c] unit test
 
 Happy Hacking!
 
 [issort.c]: issort.c
-[slist.c]: slist.c
+[list.c]: list.c
 [issort_test.c]: issort_test.c
-[slist_test.c]: slist_test.c
+[list_test.c]: list_test.c

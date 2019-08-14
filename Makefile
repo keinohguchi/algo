@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0
 SRC	:= issort.c
-SRC	+= slist.c
+SRC	+= list.c
 OBJ	:= $(patsubst %.c,%.o,$(SRC))
 TEST	:= $(patsubst %.c,%_test,$(SRC))
 TESTOBJ	+= $(patsubst %,%.o,$(TEST))

@@ -3,7 +3,7 @@
 #include <string.h>
 #include <errno.h>
 
-#include "slist.h"
+#include "list.h"
 
 void list_init(struct list *l, void (*destroy)(void *data))
 {

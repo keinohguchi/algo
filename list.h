@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0 */
-#ifndef _SLIST_H
-#define _SLIST_H
+#ifndef _LIST_H
+#define _LIST_H
 
 struct node {
 	struct node	*next;
@@ -34,4 +34,4 @@ static inline struct node *list_tail(const struct list *l)
 	return l->tail;
 }
 
-#endif /* _SLIST_H */
+#endif /* _LIST_H */
