@@ -20,7 +20,7 @@ void list_destroy(struct list *l)
 	for (n = l->head; n; n = next) {
 		if (l->destroy)
 			(l->destroy)((void *)n->data);
-		next = n;
+		next = n->next;
 		free(n);
 	}
 	l->head = l->tail = NULL;

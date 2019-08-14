@@ -34,4 +34,14 @@ static inline struct node *list_tail(const struct list *l)
 	return l->tail;
 }
 
+static inline struct node *list_node_next(const struct node *n)
+{
+	return n->next;
+}
+
+static inline const void *list_node_data(const struct node *n)
+{
+	return n->data;
+}
+
 #endif /* _LIST_H */

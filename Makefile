@@ -4,9 +4,11 @@ SRC	+= list.c
 OBJ	:= $(patsubst %.c,%.o,$(SRC))
 TEST	:= $(patsubst %.c,%_test,$(SRC))
 TESTOBJ	+= $(patsubst %,%.o,$(TEST))
-CFLAGS	+= -Wall -Werror
+CFLAGS	+= -Wall
+CFLAGS	+= -Werror
+CFLAGS	+= -g
 .PHONY: all test clean
-all: $(TEST) test
+all: $(TEST)
 $(TEST): $(OBJ) $(TESTOBJ)
 	$(CC) $(CFLAGS) -o $@ $@.o $(OBJ)
 %.o: %.c %.h
