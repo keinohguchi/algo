@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0
-SRC	:= issort.c
+SRC	:= factorial.c
+SRC	+= issort.c
 SRC	+= list.c
 OBJ	:= $(patsubst %.c,%.o,$(SRC))
 TEST	:= $(patsubst %.c,%_test,$(SRC))
@@ -23,6 +24,7 @@ test: $(TEST)
 		else                            \
 			echo FAIL;              \
 			cat $$t.log;            \
+			exit 1;                 \
 		fi;                             \
 	done
 clean:
