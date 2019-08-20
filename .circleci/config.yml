@@ -14,13 +14,13 @@ workflows:
             - checkout
       - test-arch64:
           requires:
-            - checkout
+            - arch64
       - ubuntu64:
           requires:
             - checkout
       - test-ubuntu64:
           requires:
-            - checkout
+            - ubuntu64
 jobs:
   checkout:
     <<: *defaults
