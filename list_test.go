@@ -42,6 +42,7 @@ func TestNewList(t *testing.T) {
 			if l == nil {
 				t.Fatal("unexpected result")
 			}
+			l.Close()
 		})
 	}
 }
@@ -75,6 +76,7 @@ func TestListInsertHeadInt(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			l := NewList(tc.dtor)
+			defer l.Close()
 			var err error
 			for _, v := range tc.list {
 				_, err = l.InsertNext(nil, v)
@@ -104,7 +106,6 @@ func TestListInsertHeadInt(t *testing.T) {
 						i, got[i], tc.want[i])
 				}
 			}
-			l.Close()
 		})
 	}
 }
@@ -138,6 +139,7 @@ func TestListInsertHeadString(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			l := NewList(tc.dtor)
+			defer l.Close()
 			var err error
 			for _, v := range tc.list {
 				_, err = l.InsertNext(nil, v)
@@ -167,7 +169,6 @@ func TestListInsertHeadString(t *testing.T) {
 						i, got[i], tc.want[i])
 				}
 			}
-			l.Close()
 		})
 	}
 }
@@ -201,6 +202,7 @@ func TestListInsertNextInt(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			l := NewList(tc.dtor)
+			defer l.Close()
 			var n *ListNode
 			for _, v := range tc.list {
 				var err error
@@ -231,7 +233,6 @@ func TestListInsertNextInt(t *testing.T) {
 						i, got[i], tc.want[i])
 				}
 			}
-			l.Close()
 		})
 	}
 }
@@ -265,6 +266,7 @@ func TestListInsertNextString(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			l := NewList(tc.dtor)
+			defer l.Close()
 			var n *ListNode
 			for _, v := range tc.list {
 				var err error
@@ -295,7 +297,6 @@ func TestListInsertNextString(t *testing.T) {
 						i, got[i], tc.want[i])
 				}
 			}
-			l.Close()
 		})
 	}
 }
@@ -356,6 +357,7 @@ func TestRemoveHeadInt(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			l := NewList(tc.dtor)
+			defer l.Close()
 			var n *ListNode
 			for _, v := range tc.list {
 				var err error
@@ -463,6 +465,7 @@ func TestRemoveHeadString(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			l := NewList(tc.dtor)
+			defer l.Close()
 			var n *ListNode
 			for _, v := range tc.list {
 				var err error

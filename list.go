@@ -23,8 +23,11 @@ func NewList(dtor func(interface{})) *List {
 }
 
 func (m *List) Close() {
-	for n := m.Head; n != nil; n = n.Next {
+	var next *ListNode
+	for n := m.Head; n != nil; n = next {
 		m.dtor(n.Value)
+		next = n.Next
+		n.Next = nil
 	}
 }
 

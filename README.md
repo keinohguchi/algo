@@ -13,6 +13,22 @@
 - [list.c], [list.go]: Singly linked list example
   - [list_test.c], [list_test.go]: [list.c], [list.go] unit test
 
+## Tests
+
+```sh
+$ make test | tail
+    --- PASS: TestRemoveHeadString/4_out_of_5_removal (0.00s)
+    --- PASS: TestRemoveHeadString/5_out_of_5_removal (0.00s)
+PASS
+ok      command-line-arguments  1.011s
+ok      command-line-arguments  0.002s  coverage: 90.3% of statements
+C tests
+=======
+factorial_test: PASS
+issort_test:    PASS
+list_test:      PASS
+```
+
 Happy Hacking!
 
 [factorial.c]: factorial.c
