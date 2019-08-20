@@ -39,3 +39,11 @@ test: $(TEST)
 	@go test -cover *.go
 clean:
 	@$(RM) $(OBJ) $(TESTOBJ) $(TEST) *.log
+# Docker based compilation.
+.PHONY: arch64
+arch64: arch64-image
+	docker run -v $(PWD):/home/build algo/$@ make all clean
+%-image:
+	docker build -t algo/$* -f Dockerfile.$* .
+%-arch64: arch64-image
+	docker run -v $(PWD):/home/build algo/arch64 make $* clean
