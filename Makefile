@@ -39,7 +39,7 @@ test: $(TEST)
 	@go test -cover *.go
 clean:
 	@$(RM) $(OBJ) $(TESTOBJ) $(TEST) *.log
-# Docker based compilation.
+# CI targets.
 .PHONY: arch64 ubuntu64
 arch64: arch64-image
 	docker run -v $(PWD):/home/build algo/$@ make all clean
