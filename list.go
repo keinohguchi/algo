@@ -4,14 +4,14 @@ package algo
 import "os"
 
 type List struct {
-	Head *Node
-	Tail *Node
+	Head *ListNode
+	Tail *ListNode
 	Size int
 	dtor func(interface{})
 }
 
-type Node struct {
-	Next  *Node
+type ListNode struct {
+	Next  *ListNode
 	Value interface{}
 }
 
@@ -28,8 +28,8 @@ func (m *List) Close() {
 	}
 }
 
-func (m *List) InsertNext(prev *Node, v interface{}) (*Node, error) {
-	node := &Node{Value: v}
+func (m *List) InsertNext(prev *ListNode, v interface{}) (*ListNode, error) {
+	node := &ListNode{Value: v}
 	next := &m.Head
 	if prev != nil {
 		next = &prev.Next
@@ -43,7 +43,7 @@ func (m *List) InsertNext(prev *Node, v interface{}) (*Node, error) {
 	return node, nil
 }
 
-func (m *List) RemoveNext(prev *Node) (interface{}, error) {
+func (m *List) RemoveNext(prev *ListNode) (interface{}, error) {
 	node := m.Head
 	if prev != nil {
 		node = prev.Next
@@ -59,5 +59,6 @@ func (m *List) RemoveNext(prev *Node) (interface{}, error) {
 		m.Head = node.Next
 	}
 	node.Next = nil
+	m.Size -= 1
 	return node.Value, nil
 }
