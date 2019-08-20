@@ -6,13 +6,19 @@ defaults: &defaults
     image: ubuntu-1604:201903-01
 workflows:
   version: 2
-  checkout_build_help_test:
+  checkout_run_test:
     jobs:
       - checkout
       - arch64:
           requires:
             - checkout
       - test-arch64:
+          requires:
+            - checkout
+      - ubuntu64:
+          requires:
+            - checkout
+      - test-ubuntu64:
           requires:
             - checkout
 jobs:
@@ -35,3 +41,15 @@ jobs:
       - attach_workspace:
           at: .
       - run: make test-arch64
+  ubuntu64:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+      - run: make ubuntu64
+  test-ubuntu64:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+      - run: make test-ubuntu64

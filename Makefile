@@ -40,10 +40,14 @@ test: $(TEST)
 clean:
 	@$(RM) $(OBJ) $(TESTOBJ) $(TEST) *.log
 # Docker based compilation.
-.PHONY: arch64
+.PHONY: arch64 ubuntu64
 arch64: arch64-image
 	docker run -v $(PWD):/home/build algo/$@ make all clean
-%-image:
-	docker build -t algo/$* -f Dockerfile.$* .
+ubuntu64: ubuntu64-image
+	docker run -v $(PWD):/home/build algo/$@ make all clean
 %-arch64: arch64-image
 	docker run -v $(PWD):/home/build algo/arch64 make $* clean
+%-ubuntu64: ubuntu64-image
+	docker run -v $(PWD):/home/build algo/ubuntu64 make $* clean
+%-image:
+	docker build -t algo/$* -f Dockerfile.$* .
