@@ -14,3 +14,12 @@
   - [list_test.c], [list_test.go]: [list.c], [list.go] unit test
 
 Happy Hacking!
+
+[factorial.c]: factorial.c
+[factorial_test.c]: factorial_test.c
+[issort.c]: issort.c
+[issort_test.c]: issort_test.c
+[list.c]: list.c
+[list.go]: list.go
+[list_test.c]: list_test.c
+[list_test.go]: list_test.go
