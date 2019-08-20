@@ -19,6 +19,10 @@ build:
 %.o: %.c %.h
 	$(CC) $(CFLAGS) -o $@ -c $<
 test: $(TEST)
+	-@echo "Go tests"
+	-@echo "========"
+	@go test -race -v *.go
+	@go test -cover *.go
 	-@echo "C tests"
 	-@echo "======="
 	@for t in $(TEST);                      \
@@ -33,10 +37,6 @@ test: $(TEST)
 			exit 1;                 \
 		fi;                             \
 	done
-	-@echo "Go tests"
-	-@echo "========"
-	@go test -race -v *.go
-	@go test -cover *.go
 clean:
 	@$(RM) $(OBJ) $(TESTOBJ) $(TEST) *.log
 # CI targets.
