@@ -27,44 +27,48 @@ void list_destroy(struct list *l)
 	l->size = 0;
 }
 
-int list_ins_next(struct list *l, struct node *n, const void *data)
+int list_ins_next(struct list *list, struct node *prev, const void *data)
 {
-	struct node **nextp, *newp;
+	struct node **next, *node;
 
-	newp = malloc(sizeof(struct node));
-	if (!newp)
+	node = malloc(sizeof(struct node));
+	if (!node)
 		return -1;
-	memset(newp, 0, sizeof(struct node));
-	newp->data = data;
-	if (!n)
-		nextp = &l->head;
+	memset(node, 0, sizeof(struct node));
+	node->data = data;
+	if (prev)
+		next = &prev->next;
 	else
-		nextp = &n->next;
-	if (*nextp)
-		newp->next = (*nextp)->next;
-	if (!newp->next)
-		l->tail = newp;
-	*nextp = newp;
-	l->size += 1;
+		next = &list->head;
+	if (*next)
+		node->next = *next;
+	else
+		list->tail = node;
+	*next = node;
+	list->size += 1;
 	return 0;
 }
 
-int list_rem_next(struct list *l, struct node *n, void **data)
+int list_rem_next(struct list *l, struct node *prev, void **data)
 {
-	struct node *node, *prev = n;
+	struct node *node;
 
-	if (n)
-		node = n->next;
+	if (prev)
+		node = prev->next;
 	else
 		node = l->head;
-	l->size -= 1;
-	*data = (void *)node->data;
+	if (!node) {
+		errno = EINVAL;
+		return -1;
+	}
 	if (prev)
 		prev->next = node->next;
 	else
 		l->head = node->next;
 	if (!node->next)
 		l->tail = prev;
+	*data = (void *)node->data;
 	free(node);
+	l->size -= 1;
 	return 0;
 }
