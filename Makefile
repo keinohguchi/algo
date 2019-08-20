@@ -8,13 +8,17 @@ TESTOBJ	+= $(patsubst %,%.o,$(TEST))
 CFLAGS	+= -Wall
 CFLAGS	+= -Werror
 CFLAGS	+= -g
-.PHONY: all test clean
-all: $(TEST)
+.PHONY: all fmt test clean
+all: fmt $(TEST)
 $(TEST): $(OBJ) $(TESTOBJ)
 	$(CC) $(CFLAGS) -o $@ $@.o $(OBJ)
+fmt:
+	@go fmt *.go
 %.o: %.c %.h
 	$(CC) $(CFLAGS) -o $@ -c $<
 test: $(TEST)
+	@echo "C tests"
+	@echo "======="
 	@for t in $(TEST);                      \
 	do                                      \
 		printf "$$t:\t";                \
@@ -27,5 +31,8 @@ test: $(TEST)
 			exit 1;                 \
 		fi;                             \
 	done
+	@echo "Go tests"
+	@echo "========"
+	@go test -v *.go
 clean:
 	@$(RM) $(OBJ) $(TESTOBJ) $(TEST) *.log
