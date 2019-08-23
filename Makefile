@@ -2,30 +2,29 @@
 SRC	:= factorial.c
 SRC	+= issort.c
 SRC	+= list.c
-DIS	+= $(patsubst %.c,%.s,$(SRC))
+ASM	:= $(patsubst %.c,%.s,$(SRC))
 OBJ	:= $(patsubst %.c,%.o,$(SRC))
 TEST	:= $(patsubst %.c,%_test,$(SRC))
-TESTOBJ	+= $(patsubst %,%.o,$(TEST))
-ASM	:= $(patsubst %.asm,%_asm,$(wildcard *.asm))
+TESTOBJ	:= $(patsubst %,%.o,$(TEST))
+INT	:= $(patsubst %.asm,%.int,$(wildcard *.asm))
 CFLAGS	+= -Wall
 CFLAGS	+= -Werror
 CFLAGS	+= -g
-.PHONY: all fmt build disas clean test
-all: build disas $(ASM) $(TEST)
+.PHONY: all fmt build clean test
+all: build $(DIS) $(ASM) $(INT) $(TEST)
 $(TEST): $(OBJ) $(TESTOBJ)
 	$(CC) $(CFLAGS) -o $@ $@.o $(OBJ)
 fmt:
 	@go fmt *.go
 build:
 	@go build -race *.go
-disas: $(DIS)
 clean:
-	@$(RM) $(OBJ) $(TESTOBJ) $(ASM) $(DIS) $(TEST) *.lst *.log
+	@$(RM) $(OBJ) $(TESTOBJ) $(ASM) $(INT) $(TEST) *.o *.lst *.log
 %.o: %.c %.h
 	$(CC) $(CFLAGS) -o $@ -c $<
 %.s: %.c
 	$(CC) $(CFLAGS) -O3 -S -masm=intel $<
-%_asm: %.asm
+%.int: %.asm
 	yasm -f elf64 -g dwarf2 -l $@.lst -o $@.o $<
 	$(CC) $(CFLAGS) -g -static -o $@ $@.o
 test: $(TEST)

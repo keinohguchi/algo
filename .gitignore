@@ -1,6 +1,7 @@
+*.s
 *.o
 *.log
 *.lst
 *.out
-*_asm
+*.int
 *_test
