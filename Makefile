@@ -2,22 +2,28 @@
 SRC	:= factorial.c
 SRC	+= issort.c
 SRC	+= list.c
+ASM	:= $(patsubst %.asm,%_asm,$(wildcard *.asm))
 OBJ	:= $(patsubst %.c,%.o,$(SRC))
 TEST	:= $(patsubst %.c,%_test,$(SRC))
 TESTOBJ	+= $(patsubst %,%.o,$(TEST))
 CFLAGS	+= -Wall
 CFLAGS	+= -Werror
 CFLAGS	+= -g
-.PHONY: all fmt build test clean
-all: fmt build $(TEST)
+.PHONY: all fmt build clean test
+all: build $(ASM) $(TEST)
 $(TEST): $(OBJ) $(TESTOBJ)
 	$(CC) $(CFLAGS) -o $@ $@.o $(OBJ)
 fmt:
 	@go fmt *.go
 build:
 	@go build -race *.go
+clean:
+	@$(RM) $(OBJ) $(TESTOBJ) $(ASM) $(TEST) *.lst *.log
 %.o: %.c %.h
 	$(CC) $(CFLAGS) -o $@ -c $<
+%_asm: %.asm
+	yasm -f elf64 -g dwarf2 -l $@.lst -o $@.o $<
+	$(CC) $(CFLAGS) -g -static -o $@ $@.o
 test: $(TEST)
 	-@echo "Go tests"
 	-@echo "========"
@@ -37,8 +43,6 @@ test: $(TEST)
 			exit 1;                 \
 		fi;                             \
 	done
-clean:
-	@$(RM) $(OBJ) $(TESTOBJ) $(TEST) *.log
 # CI targets.
 .PHONY: arch64 ubuntu64
 arch64: arch64-image
