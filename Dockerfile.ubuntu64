@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0
 FROM ubuntu:18.04
-RUN apt-get update && apt-get install -y binutils gcc make golang-1.10
+RUN apt-get update && apt-get install -y binutils gcc golang-1.10 yasm make
 WORKDIR /home/build
 ENV GOROOT=/usr/lib/go-1.10
 ENV PATH="${GOROOT}/bin:${PATH}"
