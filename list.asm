@@ -1,10 +1,12 @@
 ; SPDX-License-Identifier: GPL-2.0
-	segment	.bss
 	struc	node
 .next	resq	1
 .data	resq	1
 	endstruc
+	segment	.bss
 list	resq	1
+
+; struct node *insert(struct node *next, const char *data);
 	segment	.text
 	extern	malloc
 insert	push	rbp
@@ -23,6 +25,25 @@ insert	push	rbp
 	pop	rbx
 	leave
 	ret
+
+; void cleanup(struct node *head);
+	extern	free
+cleanup	push	rbp
+	mov	rbp, rsp
+	push	rbx
+	push	r12
+.more	cmp	rdi, 0
+	jz	.done
+	mov	rbx, [rdi+node.next]
+	call	free
+	mov	rdi, rbx
+	jmp	.more
+.done	pop	r12
+	pop	rbx
+	leave
+	ret
+
+; void dump(const struct node *head);
 	segment	.data
 fmt	db	"%s", 0xa, 0
 	segment	.test
@@ -44,6 +65,8 @@ dump	push	rbp
 	pop	rbx
 	leave
 	ret
+
+; int main(int argc, char *const argv[]);
 	segment	.text
 	global	main
 main	push	rbp
@@ -65,6 +88,8 @@ main	push	rbp
 	jmp	.more
 .out	mov	rdi, [list]
 	call	dump
+	mov	rdi, [list]
+	call	cleanup
 	xor	eax, eax
 	pop	rbx
 	pop	r12
