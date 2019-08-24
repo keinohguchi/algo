@@ -6,7 +6,7 @@ ASM	:= $(patsubst %.c,%.s,$(SRC))
 OBJ	:= $(patsubst %.c,%.o,$(SRC))
 TEST	:= $(patsubst %.c,%_test,$(SRC))
 TESTOBJ	:= $(patsubst %,%.o,$(TEST))
-INT	:= $(patsubst %.asm,%.int,$(wildcard *.asm))
+INT	:= $(patsubst %.asm,%_int,$(wildcard *.asm))
 CFLAGS	+= -Wall
 CFLAGS	+= -Werror
 CFLAGS	+= -g
@@ -24,7 +24,7 @@ clean:
 	$(CC) $(CFLAGS) -o $@ -c $<
 %.s: %.c
 	$(CC) $(CFLAGS) -O3 -S -masm=intel $<
-%.int: %.asm
+%_int: %.asm
 	yasm -f elf64 -g dwarf2 -l $@.lst -o $@.o $<
 	$(CC) $(CFLAGS) -g -static -o $@ $@.o
 test: $(TEST)

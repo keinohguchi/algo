@@ -12,6 +12,7 @@
   - [issort_test.c]: [issort.c] unit test
 - [list.c], [list.go], [list.asm]: Singly linked list example
   - [list_test.c], [list_test.go]: [list.c], [list.go] unit test
+- [dlist.asm]: Doubly circular list example
 
 ## Tests
 
