@@ -10,38 +10,33 @@ struct node {
 struct list {
 	struct node	*head;
 	struct node	*tail;
-	size_t		size;
-	void		(*destroy)(void *data);
+	int		size;
+	void		(*dtor)(void *d);
 };
 
-void list_init(struct list *l, void (*destroy)(void *data));
+void list_init(struct list *l, void (*dtor)(void *data));
 void list_destroy(struct list *l);
-int list_ins_next(struct list *l, struct node *n, const void *data);
-int list_rem_next(struct list *l, struct node *n, void **data);
-
-static inline int list_size(const struct list *l)
-{
-	return l->size;
-}
-
+int list_ins_next(struct list *l, struct node *n, const void *d);
+int list_rem_next(struct list *l, struct node *n, void **d);
 static inline struct node *list_head(const struct list *l)
 {
 	return l->head;
 }
-
 static inline struct node *list_tail(const struct list *l)
 {
 	return l->tail;
 }
-
-static inline struct node *list_node_next(const struct node *n)
+static inline struct node *list_node_next(struct node *n)
 {
 	return n->next;
 }
-
-static inline const void *list_node_data(const struct node *n)
+static inline void *list_node_data(struct node *n)
 {
-	return n->data;
+	return (void *)n->data;
+}
+static inline int list_size(const struct list *l)
+{
+	return l->size;
 }
 
 #endif /* _LIST_H */

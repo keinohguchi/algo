@@ -4,71 +4,67 @@
 #include <errno.h>
 #include "list.h"
 
-void list_init(struct list *l, void (*destroy)(void *data))
+static void list_noop_dtor(void *d)
 {
-	memset(l, 0, sizeof(*l));
+	return;
+}
+
+void list_init(struct list *l, void (*dtor)(void *data))
+{
 	l->head = l->tail = NULL;
-	l->destroy = destroy;
+	l->dtor = dtor;
 	l->size = 0;
 }
 
 void list_destroy(struct list *l)
 {
-	struct node *n, *next;
+	void (*dtor)(void *data) = l->dtor != NULL ? l->dtor : list_noop_dtor;
+	struct node *node, *next;
 
-	for (n = l->head; n; n = next) {
-		if (l->destroy)
-			(l->destroy)((void *)n->data);
-		next = n->next;
-		free(n);
+	node = list_head(l);
+	for (node = list_head(l); node != NULL; node = next) {
+		next = node->next;
+		dtor((void *)node->data);
+		free(node);
 	}
-	l->head = l->tail = NULL;
-	l->destroy = NULL;
-	l->size = 0;
 }
 
-int list_ins_next(struct list *list, struct node *prev, const void *data)
+int list_ins_next(struct list *l, struct node *n, const void *d)
 {
-	struct node **next, *node;
+	struct node *node, **next;
 
-	node = malloc(sizeof(struct node));
+	node = malloc(sizeof(*node));
 	if (!node)
-		return -1;
-	memset(node, 0, sizeof(struct node));
-	node->data = data;
-	if (prev)
-		next = &prev->next;
+		return -ENOMEM;
+	node->data = d;
+	if (!n)
+		next = &l->head;
 	else
-		next = &list->head;
-	if (*next)
-		node->next = *next;
-	else
-		list->tail = node;
+		next = &n->next;
+	node->next = *next;
 	*next = node;
-	list->size += 1;
+	if (!node->next)
+		l->tail = node;
+	l->size++;
 	return 0;
 }
 
-int list_rem_next(struct list *l, struct node *prev, void **data)
+int list_rem_next(struct list *l, struct node *n, void **d)
 {
-	struct node *node;
+	struct node *node, **next;
 
-	if (prev)
-		node = prev->next;
+	if (n != NULL)
+		next = &n->next;
 	else
-		node = l->head;
-	if (!node) {
-		errno = EINVAL;
-		return -1;
-	}
-	if (prev)
-		prev->next = node->next;
-	else
-		l->head = node->next;
-	if (!node->next)
-		l->tail = prev;
-	*data = (void *)node->data;
+		next = &l->head;
+	if (!*next)
+		return -EINVAL;
+	node = *next;
+	*next = node->next;
+	if (!*next)
+		l->tail = n;
+	*d = (void *)node->data;
 	free(node);
-	l->size -= 1;
+	l->size--;
 	return 0;
 }
