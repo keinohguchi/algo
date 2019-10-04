@@ -9,29 +9,29 @@ static void list_noop_dtor(void *d)
 	return;
 }
 
-void list_init(struct list *l, void (*dtor)(void *data))
+void hlist_init(struct hlist *l, void (*dtor)(void *data))
 {
 	l->head = l->tail = NULL;
 	l->dtor = dtor;
 	l->size = 0;
 }
 
-void list_destroy(struct list *l)
+void hlist_destroy(struct hlist *l)
 {
 	void (*dtor)(void *data) = l->dtor != NULL ? l->dtor : list_noop_dtor;
-	struct list_node *node, *next;
+	struct hlist_node *node, *next;
 
-	node = list_head(l);
-	for (node = list_head(l); node != NULL; node = next) {
+	node = hlist_head(l);
+	for (node = hlist_head(l); node != NULL; node = next) {
 		next = node->next;
 		dtor((void *)node->data);
 		free(node);
 	}
 }
 
-int list_ins_next(struct list *l, struct list_node *n, const void *d)
+int hlist_ins_next(struct hlist *l, struct hlist_node *n, const void *d)
 {
-	struct list_node *node, **next;
+	struct hlist_node *node, **next;
 
 	node = malloc(sizeof(*node));
 	if (!node)
@@ -49,9 +49,9 @@ int list_ins_next(struct list *l, struct list_node *n, const void *d)
 	return 0;
 }
 
-int list_rem_next(struct list *l, struct list_node *n, void **d)
+int hlist_rem_next(struct hlist *l, struct hlist_node *n, void **d)
 {
-	struct list_node *node, **next;
+	struct hlist_node *node, **next;
 
 	if (n != NULL)
 		next = &n->next;
