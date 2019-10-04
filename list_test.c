@@ -14,9 +14,9 @@ struct test {
 
 static int test(const struct test *restrict t)
 {
-	const int *data;
-	struct node *n;
+	struct list_node *n;
 	struct list l;
+	const int *data;
 	int ret = -1;
 	int i;
 

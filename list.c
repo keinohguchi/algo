@@ -19,7 +19,7 @@ void list_init(struct list *l, void (*dtor)(void *data))
 void list_destroy(struct list *l)
 {
 	void (*dtor)(void *data) = l->dtor != NULL ? l->dtor : list_noop_dtor;
-	struct node *node, *next;
+	struct list_node *node, *next;
 
 	node = list_head(l);
 	for (node = list_head(l); node != NULL; node = next) {
@@ -29,9 +29,9 @@ void list_destroy(struct list *l)
 	}
 }
 
-int list_ins_next(struct list *l, struct node *n, const void *d)
+int list_ins_next(struct list *l, struct list_node *n, const void *d)
 {
-	struct node *node, **next;
+	struct list_node *node, **next;
 
 	node = malloc(sizeof(*node));
 	if (!node)
@@ -49,9 +49,9 @@ int list_ins_next(struct list *l, struct node *n, const void *d)
 	return 0;
 }
 
-int list_rem_next(struct list *l, struct node *n, void **d)
+int list_rem_next(struct list *l, struct list_node *n, void **d)
 {
-	struct node *node, **next;
+	struct list_node *node, **next;
 
 	if (n != NULL)
 		next = &n->next;
