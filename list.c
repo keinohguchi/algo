@@ -120,11 +120,13 @@ int hlist_rem_next(struct hlist *l, struct hlist_node *n, void **d)
 		next = &n->next;
 	else
 		next = &l->head;
-	if (!*next)
-		return -EINVAL;
+	if (!*next) {
+		errno = EINVAL;
+		return -1;
+	}
 	node = *next;
 	*next = node->next;
-	if (!*next)
+	if (!node->next)
 		l->tail = n;
 	*d = (void *)node->data;
 	free(node);
