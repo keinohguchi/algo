@@ -1,4 +1,4 @@
-# Mastering Algorithms with C and Go!
+# Mastering Algorithms with C!
 
 [![CircleCI]](https://circleci.com/gh/keinohguchi/workflows/algo)
 
@@ -16,6 +16,8 @@
   - [stack_test.c]: [stack.c] unit test
 - [queue.c]: Queue example
   - [queue_test.c]: [queue.c] unit test
+- [set.c]: Set example
+  - [set_test.c]: [set.c] unit test
 
 ## Tests
 
@@ -31,6 +33,9 @@ C tests
 factorial_test: PASS
 issort_test:    PASS
 list_test:      PASS
+stack_test:     PASS
+queue_test:     PASS
+set_test:       PASS
 ```
 
 Happy Hacking!
@@ -48,3 +53,5 @@ Happy Hacking!
 [stack_test.c]: stack_test.c
 [queue.c]: queue.c
 [queue_test.c]: queue_test.c
+[set.c]: set.c
+[set_test.c]: set_test.c
