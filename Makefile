@@ -3,6 +3,7 @@ SRC	:= factorial.c
 SRC	+= issort.c
 SRC	+= list.c
 SRC	+= stack.c
+SRC	+= queue.c
 ASM	:= $(patsubst %.c,%.s,$(SRC))
 OBJ	:= $(patsubst %.c,%.o,$(SRC))
 TEST	:= $(patsubst %.c,%_test,$(SRC))

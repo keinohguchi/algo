@@ -13,7 +13,9 @@
 - [list.c], [list.go], [list.asm]: Linked list example
   - [list_test.c], [list_test.go]: [list.c], [list.go] unit test
 - [stack.c]: Stack example
-  - [stack_test.c]: [stakc.c] unit test
+  - [stack_test.c]: [stack.c] unit test
+- [queue.c]: Queue example
+  - [queue_test.c]: [queue.c] unit test
 
 ## Tests
 
@@ -44,3 +46,5 @@ Happy Hacking!
 [list_test.go]: list_test.go
 [stack.c]: stack.c
 [stack_test.c]: stack_test.c
+[queue.c]: queue.c
+[queue_test.c]: queue_test.c
