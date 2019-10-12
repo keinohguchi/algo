@@ -9,6 +9,11 @@ static int same(const void *d1, const void *d2)
 	return *i1 == *i2;
 }
 
+static int divisionby37(const void *key)
+{
+	return (unsigned long)key%37;
+}
+
 static int divisionby1699(const void *key)
 {
 	return (unsigned long)key%1699;
@@ -24,17 +29,45 @@ int main(void)
 		int		data[32];
 	} *t, tests[] = {
 		{
-			.name	= "1 entry with division hash method",
+			.name	= "1 entry with division by 37 hash method",
+			.h	= divisionby37,
+			.data	= {1},
+		},
+		{
+			.name	= "8 entries with division by 37 hash method",
+			.h	= divisionby37,
+			.data	= {1, 2, 3, 4, 5, 6, 7, 8},
+		},
+		{
+			.name	= "16 entries with division by 37 hash method",
+			.h	= divisionby37,
+			.data	= {
+				9, 10, 11, 12, 13, 14, 15, 16,
+				1, 2, 3, 4, 5, 6, 7, 8,
+			},
+		},
+		{
+			.name	= "32 entries with division by 37 hash method",
+			.h	= divisionby37,
+			.data	= {
+				25, 26, 27, 28, 29, 30, 31, 32,
+				9, 10, 11, 12, 13, 14, 15, 16,
+				17, 18, 19, 20, 21, 22, 23, 24,
+				1, 2, 3, 4, 5, 6, 7, 8,
+			},
+		},
+		{
+			.name	= "1 entry with division by 1699 hash method",
 			.h	= divisionby1699,
 			.data	= {1},
 		},
 		{
-			.name	= "8 entries with division hash method",
+			.name	= "8 entries with division by 1699 hash method",
 			.h	= divisionby1699,
 			.data	= {1, 2, 3, 4, 5, 6, 7, 8},
 		},
 		{
-			.name	= "16 entries with division hash method",
+			.name	= "16 entries with division by 1699 hash method",
 			.h	= divisionby1699,
 			.data	= {
 				9, 10, 11, 12, 13, 14, 15, 16,
@@ -42,7 +75,7 @@ int main(void)
 			},
 		},
 		{
-			.name	= "32 entries with division hash method",
+			.name	= "32 entries with division by 1699 hash method",
 			.h	= divisionby1699,
 			.data	= {
 				25, 26, 27, 28, 29, 30, 31, 32,
