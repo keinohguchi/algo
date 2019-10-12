@@ -10,9 +10,10 @@
   - [factorial_test.c]: [factorial.c] unit test
 - [issort.c]: Insertion sort example
   - [issort_test.c]: [issort.c] unit test
-- [list.c], [list.go], [list.asm]: Singly linked list example
+- [list.c], [list.go], [list.asm]: Linked list example
   - [list_test.c], [list_test.go]: [list.c], [list.go] unit test
-- [dlist.asm]: Doubly circular list example
+- [stack.c]: Stack example
+  - [stack_test.c]: [stakc.c] unit test
 
 ## Tests
 
@@ -41,3 +42,5 @@ Happy Hacking!
 [list.asm]: list.asm
 [list_test.c]: list_test.c
 [list_test.go]: list_test.go
+[stack.c]: stack.c
+[stack_test.c]: stack_test.c
