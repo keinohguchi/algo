@@ -18,6 +18,8 @@
   - [queue_test.c]: [queue.c] unit test
 - [set.c]: Set example
   - [set_test.c]: [set.c] unit test
+- [hash.c]: Hash table example
+  - [hash_test.c]: [hash.c] unit test
 
 ## Tests
 
@@ -36,6 +38,7 @@ list_test:      PASS
 stack_test:     PASS
 queue_test:     PASS
 set_test:       PASS
+hash_test:      PASS
 ```
 
 Happy Hacking!
@@ -55,3 +58,5 @@ Happy Hacking!
 [queue_test.c]: queue_test.c
 [set.c]: set.c
 [set_test.c]: set_test.c
+[hash.c]: hash.c
+[hash_test.c]: hash_test.c
