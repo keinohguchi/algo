@@ -211,7 +211,7 @@ static int test_set_union(void)
 	int fail = 0;
 
 	for (t = tests; t->name; t++) {
-		struct set s1, s2, su;
+		struct set s1, s2, got;
 		int i, ret;
 
 		ret = set_init(&s1, same, NULL);
@@ -220,7 +220,7 @@ static int test_set_union(void)
 		ret = set_init(&s2, same, NULL);
 		if (ret == -1)
 			goto perr;
-		ret = set_init(&su, same, NULL);
+		ret = set_init(&got, same, NULL);
 		if (ret == -1)
 			goto perr;
 		for (i = 0; i < t->size1; i++) {
@@ -243,33 +243,33 @@ static int test_set_union(void)
 				t->name, t->size2, set_size(&s2));
 			goto err;
 		}
-		ret = set_union(&su, &s1, &s2);
+		ret = set_union(&got, &s1, &s2);
 		if (ret == -1)
 			goto perr;
-		if (set_size(&su) != t->size_want) {
+		if (set_size(&got) != t->size_want) {
 			fprintf(stderr, "%s: unexpected union set size:\n\t- want: %d\n\t-  got: %d\n",
-				t->name, t->size_want, set_size(&su));
+				t->name, t->size_want, set_size(&got));
 			goto err;
 		}
 		for (i = 0; i < t->size_want; i++) {
 			int *gotp = (int *)&t->want[i];
-			ret = set_remove(&su, (void **)&gotp);
+			ret = set_remove(&got, (void **)&gotp);
 			if (ret == -1)
 				goto perr;
 		}
-		if (set_size(&su)) {
+		if (set_size(&got)) {
 			fprintf(stderr, "%s: unexpected final union size:\n\t- want: 0\n\t-  got: %d\n",
-				t->name, set_size(&su));
+				t->name, set_size(&got));
 			goto err;
 		}
-		set_destroy(&su);
+		set_destroy(&got);
 		set_destroy(&s2);
 		set_destroy(&s1);
 		continue;
 perr:
 		perror(t->name);
 err:
-		set_destroy(&su);
+		set_destroy(&got);
 		set_destroy(&s2);
 		set_destroy(&s1);
 		fail++;
@@ -371,7 +371,7 @@ static int test_set_intersect(void)
 	int fail = 0;
 
 	for (t = tests; t->name; t++) {
-		struct set s1, s2, su;
+		struct set s1, s2, got;
 		int i, ret;
 
 		ret = set_init(&s1, same, NULL);
@@ -380,7 +380,7 @@ static int test_set_intersect(void)
 		ret = set_init(&s2, same, NULL);
 		if (ret == -1)
 			goto perr;
-		ret = set_init(&su, same, NULL);
+		ret = set_init(&got, same, NULL);
 		if (ret == -1)
 			goto perr;
 		for (i = 0; i < t->size1; i++) {
@@ -403,33 +403,193 @@ static int test_set_intersect(void)
 				t->name, t->size2, set_size(&s2));
 			goto err;
 		}
-		ret = set_intersect(&su, &s1, &s2);
+		ret = set_intersect(&got, &s1, &s2);
 		if (ret == -1)
 			goto perr;
-		if (set_size(&su) != t->size_want) {
+		if (set_size(&got) != t->size_want) {
 			fprintf(stderr, "%s: unexpected intersect set size:\n\t- want: %d\n\t-  got: %d\n",
-				t->name, t->size_want, set_size(&su));
+				t->name, t->size_want, set_size(&got));
 			goto err;
 		}
 		for (i = 0; i < t->size_want; i++) {
 			int *gotp = (int *)&t->want[i];
-			ret = set_remove(&su, (void **)&gotp);
+			ret = set_remove(&got, (void **)&gotp);
 			if (ret == -1)
 				goto perr;
 		}
-		if (set_size(&su)) {
+		if (set_size(&got)) {
 			fprintf(stderr, "%s: unexpected final intersect size:\n\t- want: 0\n\t-  got: %d\n",
-				t->name, set_size(&su));
+				t->name, set_size(&got));
 			goto err;
 		}
-		set_destroy(&su);
+		set_destroy(&got);
 		set_destroy(&s2);
 		set_destroy(&s1);
 		continue;
 perr:
 		perror(t->name);
 err:
-		set_destroy(&su);
+		set_destroy(&got);
+		set_destroy(&s2);
+		set_destroy(&s1);
+		fail++;
+	}
+	return fail;
+}
+
+static int test_set_difference(void)
+{
+	const struct test {
+		const char	*const name;
+		int		size1;
+		int		size2;
+		int		size_want;
+		int		data1[8];
+		int		data2[8];
+		int		want[16];
+	} *t, tests[] = {
+		{
+			.name		= "set_difference(): zero sets difference",
+			.size1		= 0,
+			.size2		= 0,
+			.size_want	= 0,
+		},
+		{
+			.name		= "set_difference(): 1 set each difference",
+			.size1		= 1,
+			.data1		= {1},
+			.size2		= 1,
+			.data2		= {2},
+			.size_want	= 1,
+			.want		= {1},
+		},
+		{
+			.name		= "set_difference(): 2 set each difference",
+			.size1		= 2,
+			.data1		= {1, 2},
+			.size2		= 2,
+			.data2		= {3, 4},
+			.size_want	= 2,
+			.want		= {1, 2},
+		},
+		{
+			.name		= "set_difference(): 4 set each difference",
+			.size1		= 4,
+			.data1		= {1, 2, 3, 4},
+			.size2		= 4,
+			.data2		= {5, 6, 7, 8},
+			.size_want	= 4,
+			.want		= {4, 3, 2, 1},
+		},
+		{
+			.name		= "set_difference(): 8 set each difference",
+			.size1		= 8,
+			.data1		= {1, 2, 3, 4, 5, 6, 7, 8},
+			.size2		= 8,
+			.data2		= {15, 16, 17, 18, 19, 20, 21, 22},
+			.size_want	= 8,
+			.want		= {8, 7, 6, 5, 4, 3, 2, 1},
+		},
+		{
+			.name		= "set_difference(): 1 set duplicate difference",
+			.size1		= 1,
+			.data1		= {1},
+			.size2		= 1,
+			.data2		= {1},
+			.size_want	= 0,
+			.want		= {},
+		},
+		{
+			.name		= "set_difference(): 2 set duplicate difference",
+			.size1		= 2,
+			.data1		= {1, 2},
+			.size2		= 2,
+			.data2		= {2, 1},
+			.size_want	= 0,
+			.want		= {},
+		},
+		{
+			.name		= "set_difference(): 4 set duplicate difference",
+			.size1		= 4,
+			.data1		= {1, 2, 3, 4},
+			.size2		= 4,
+			.data2		= {3, 4, 5, 6},
+			.size_want	= 2,
+			.want		= {2, 1},
+		},
+		{
+			.name		= "set_difference(): 8 set duplicate difference",
+			.size1		= 8,
+			.data1		= {1, 2, 3, 4, 5, 6, 7, 8},
+			.size2		= 8,
+			.data2		= {5, 6, 7, 8, 9, 10, 11, 12},
+			.size_want	= 4,
+			.want		= {4, 3, 2, 1},
+		},
+		{.name = NULL},
+	};
+	int fail = 0;
+
+	for (t = tests; t->name; t++) {
+		struct set s1, s2, got;
+		int i, ret;
+
+		ret = set_init(&s1, same, NULL);
+		if (ret == -1)
+			goto perr;
+		ret = set_init(&s2, same, NULL);
+		if (ret == -1)
+			goto perr;
+		ret = set_init(&got, same, NULL);
+		if (ret == -1)
+			goto perr;
+		for (i = 0; i < t->size1; i++) {
+			ret = set_insert(&s1, &t->data1[i]);
+			if (ret == -1)
+				goto perr;
+		}
+		if (set_size(&s1) != t->size1) {
+			fprintf(stderr, "%s: unexpected set1 size:\n\t- want: %d\n\t-  got: %d\n",
+				t->name, t->size1, set_size(&s1));
+			goto err;
+		}
+		for (i = 0; i < t->size2; i++) {
+			ret = set_insert(&s2, &t->data2[i]);
+			if (ret == -1)
+				goto perr;
+		}
+		if (set_size(&s2) != t->size2) {
+			fprintf(stderr, "%s: unexpected set2 size:\n\t- want: %d\n\t-  got: %d\n",
+				t->name, t->size2, set_size(&s2));
+			goto err;
+		}
+		ret = set_difference(&got, &s1, &s2);
+		if (ret == -1)
+			goto perr;
+		if (set_size(&got) != t->size_want) {
+			fprintf(stderr, "%s: unexpected difference set size:\n\t- want: %d\n\t-  got: %d\n",
+				t->name, t->size_want, set_size(&got));
+			goto err;
+		}
+		for (i = 0; i < t->size_want; i++) {
+			int *gotp = (int *)&t->want[i];
+			ret = set_remove(&got, (void **)&gotp);
+			if (ret == -1)
+				goto perr;
+		}
+		if (set_size(&got)) {
+			fprintf(stderr, "%s: unexpected final difference size:\n\t- want: 0\n\t-  got: %d\n",
+				t->name, set_size(&got));
+			goto err;
+		}
+		set_destroy(&got);
+		set_destroy(&s2);
+		set_destroy(&s1);
+		continue;
+perr:
+		perror(t->name);
+err:
+		set_destroy(&got);
 		set_destroy(&s2);
 		set_destroy(&s1);
 		fail++;
@@ -444,6 +604,7 @@ int main(void)
 	fail += test_set_insert();
 	fail += test_set_union();
 	fail += test_set_intersect();
+	fail += test_set_difference();
 	if (fail)
 		exit(EXIT_FAILURE);
 	exit(EXIT_SUCCESS);
