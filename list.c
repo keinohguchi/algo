@@ -4,47 +4,110 @@
 #include <errno.h>
 #include "list.h"
 
-static void list_noop_dtor(void *d)
+static void dtor_noop(void *d)
 {
 	return;
 }
 
-void hlist_init(struct hlist *l, void (*dtor)(void *data))
+static void init_list_node(struct list_node *n, struct list_node *head, const void *data)
 {
-	l->head = l->tail = NULL;
-	l->dtor = dtor;
+	n->next = n->prev = head;
+	n->data = data;
+}
+
+int list_init(struct list *l, void (*dtor)(void *data))
+{
+	init_list_node(&l->list, &l->list, NULL);
+	l->dtor = dtor ? dtor : dtor_noop;
 	l->size = 0;
+	return 0;
+}
+
+void list_destroy(struct list *l)
+{
+	struct list_node *node, *next;
+
+	for (node = l->list.next; node != &l->list; node = next) {
+		l->dtor((void *)node->data);
+		next = node->next;
+		free(node);
+	}
+}
+
+int list_ins_next(struct list *l, struct list_node *n, const void *d)
+{
+	struct list_node *node, **next, **prev;
+
+	node = malloc(sizeof(*node));
+	if (!node)
+		return -1;
+	init_list_node(node, &l->list, d);
+	if (n)
+		next = &n->next;
+	else
+		next = &l->list.next;
+	prev = &(*next)->prev;
+	node->next = *next;
+	node->prev = *prev;
+	*next = *prev = node;
+	l->size++;
+	return 0;
+}
+
+int list_rem_next(struct list *l, struct list_node *n, void **d)
+{
+	struct list_node *node;
+
+	if (!n)
+		n = &l->list;
+	node = n->next;
+	if (node == &l->list) {
+		errno = EINVAL;
+		return -1;
+	}
+	n->next = node->next;
+	node->next->prev = n;
+	*d = (void *)node->data;
+	free(node);
+	l->size--;
+	return 0;
+}
+
+int hlist_init(struct hlist *l, void (*dtor)(void *data))
+{
+	l->dtor = dtor ? dtor : dtor_noop;
+	l->head = l->tail = NULL;
+	l->size = 0;
+	return 0;
 }
 
 void hlist_destroy(struct hlist *l)
 {
-	void (*dtor)(void *data) = l->dtor != NULL ? l->dtor : list_noop_dtor;
-	struct hlist_node *node, *next;
+	struct hlist_node *n, *next;
 
-	node = hlist_head(l);
-	for (node = hlist_head(l); node != NULL; node = next) {
-		next = node->next;
-		dtor((void *)node->data);
-		free(node);
+	for (n = l->head; n != NULL; n = next) {
+		l->dtor((void *)n->data);
+		next = n->next;
+		free(n);
 	}
 }
 
 int hlist_ins_next(struct hlist *l, struct hlist_node *n, const void *d)
 {
-	struct hlist_node *node, **next;
+	struct hlist_node *new, **next;
 
-	node = malloc(sizeof(*node));
-	if (!node)
-		return -ENOMEM;
-	node->data = d;
-	if (!n)
-		next = &l->head;
-	else
+	new = malloc(sizeof(*new));
+	if (!new)
+		return -1;
+	new->data = d;
+	if (n)
 		next = &n->next;
-	node->next = *next;
-	*next = node;
-	if (!node->next)
-		l->tail = node;
+	else
+		next = &l->head;
+	new->next = *next;
+	*next = new;
+	if (!new->next)
+		l->tail = new;
 	l->size++;
 	return 0;
 }
@@ -53,7 +116,7 @@ int hlist_rem_next(struct hlist *l, struct hlist_node *n, void **d)
 {
 	struct hlist_node *node, **next;
 
-	if (n != NULL)
+	if (n)
 		next = &n->next;
 	else
 		next = &l->head;
