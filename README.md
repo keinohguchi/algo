@@ -20,7 +20,7 @@
   - [set_test.c]: [set.c] unit test
 - [hash.c]: Hash table example
   - [hash_test.c]: [hash.c] unit test
-- [tree.c]: Tree example
+- [tree.c]: Binary tree example
   - [tree_test.c]: [tree.c] unit test
 
 ## Tests
@@ -41,6 +41,7 @@ stack_test:     PASS
 queue_test:     PASS
 set_test:       PASS
 hash_test:      PASS
+tree_test:      PASS
 ```
 
 Happy Hacking!
