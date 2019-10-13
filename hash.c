@@ -1,4 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0 */
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
@@ -144,6 +145,10 @@ int ohash_insert(struct ohash *tbl, const void *data)
 
 	for (i = 0; i < tbl->positions; i++) {
 		int key = ohash_key(tbl, data, i);
+		if (i != 0)
+			fprintf(stderr,
+				"%s: %d time(s) hash code(%d) collision for data(%p)\n",
+				__FUNCTION__, i, key, data);
 		if (tbl->table[key] && tbl->table[key] != tbl->vacated) {
 			if (tbl->same(tbl->table[key], data))
 				return 1;
@@ -163,6 +168,10 @@ int ohash_remove(struct ohash *tbl, void **data)
 
 	for (i = 0; i < tbl->positions; i++) {
 		int key = ohash_key(tbl, *data, i);
+		if (i != 0)
+			fprintf(stderr,
+				"%s: %d time(s) hash code(%d) collision for data(%p)\n",
+				__FUNCTION__, i, key, *data);
 		if (tbl->table[key] == NULL)
 			break;
 		else if (tbl->table[key] == tbl->vacated
@@ -183,6 +192,10 @@ int ohash_lookup(const struct ohash *tbl, void **data)
 
 	for (i = 0; i < tbl->positions; i++) {
 		int key = ohash_key(tbl, *data, i);
+		if (i != 0)
+			fprintf(stderr,
+				"%s: %d time(s) hash code(%d) collision for data(%p)\n",
+				__FUNCTION__, i, key, *data);
 		if (tbl->table[key] == NULL)
 			break;
 		else if (tbl->table[key] == tbl->vacated
