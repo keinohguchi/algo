@@ -35,6 +35,19 @@ static int inorder(const struct tree_node *node, struct queue *q)
 	return 0;
 }
 
+static int postorder(const struct tree_node *node, struct queue *q)
+{
+	if (!node)
+		return 0;
+	if (postorder(node->left, q) == -1)
+		return -1;
+	if (postorder(node->right, q) == -1)
+		return -1;
+	if (enqueue(q, node->data) == -1)
+		return -1;
+	return 0;
+}
+
 static int test_tree()
 {
 	enum direction { left, right };
@@ -96,7 +109,7 @@ static int test_tree()
 			.want		= {8, 7, 6, 5, 4, 3, 2, 1},
 		},
 		{
-			.name		= "eight right inserts with preorder traversal",
+			.name		= "eight right inserts with inorder traversal",
 			.size		= 8,
 			.data		= {
 				{right, 1},{right, 2},{right, 3},{right, 4},
@@ -107,7 +120,7 @@ static int test_tree()
 			.want		= {1, 2, 3, 4, 5, 6, 7, 8},
 		},
 		{
-			.name		= "eight left/right inserts with preorder traversal",
+			.name		= "eight left/right inserts with inorder traversal",
 			.size		= 8,
 			.data		= {
 				{left, 1},{right, 2},{left, 3},{right, 4},
@@ -116,6 +129,39 @@ static int test_tree()
 			.traversal	= inorder,
 			.want_size	= 8,
 			.want		= {1, 3, 5, 7, 8, 6, 4, 2},
+		},
+		{
+			.name		= "eight left inserts with postorder traversal",
+			.size		= 8,
+			.data		= {
+				{left, 1},{left, 2},{left, 3},{left, 4},
+				{left, 5},{left, 6},{left, 7},{left, 8},
+			},
+			.traversal	= postorder,
+			.want_size	= 8,
+			.want		= {8, 7, 6, 5, 4, 3, 2, 1},
+		},
+		{
+			.name		= "eight right inserts with postorder traversal",
+			.size		= 8,
+			.data		= {
+				{right, 1},{right, 2},{right, 3},{right, 4},
+				{right, 5},{right, 6},{right, 7},{right, 8},
+			},
+			.traversal	= postorder,
+			.want_size	= 8,
+			.want		= {8, 7, 6, 5, 4, 3, 2, 1},
+		},
+		{
+			.name		= "eight left/right inserts with postorder traversal",
+			.size		= 8,
+			.data		= {
+				{left, 1},{right, 2},{left, 3},{right, 4},
+				{left, 5},{right, 6},{left, 7},{right, 8},
+			},
+			.traversal	= postorder,
+			.want_size	= 8,
+			.want		= {8, 7, 6, 5, 4, 3, 2, 1},
 		},
 		{.name = NULL},
 	};
