@@ -131,6 +131,17 @@ static int test_tree()
 			.want		= {1, 3, 5, 7, 8, 6, 4, 2},
 		},
 		{
+			.name		= "eight right/left inserts with inorder traversal",
+			.size		= 8,
+			.data		= {
+				{right, 1},{left, 2},{right, 3},{left, 4},
+				{right, 5},{left, 6},{right, 7},{left, 8},
+			},
+			.traversal	= inorder,
+			.want_size	= 8,
+			.want		= {2, 4, 6, 8, 7, 5, 3, 1},
+		},
+		{
 			.name		= "eight left inserts with postorder traversal",
 			.size		= 8,
 			.data		= {
