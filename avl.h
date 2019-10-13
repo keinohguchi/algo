@@ -2,9 +2,17 @@
 #ifndef _AVL_H
 #define _AVL_H
 
+enum avl_factor {
+	avl_left_heavy	= -1,
+	avl_balanced	= 0,
+	avl_right_heavy	= 1,
+};
+
 struct avl_node {
 	struct avl_node	*left;
 	struct avl_node	*right;
+	enum avl_factor	factor;
+	int		hidden;
 	const void	*data;
 };
 

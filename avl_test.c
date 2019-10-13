@@ -47,7 +47,7 @@ int main(void)
 	for (t = tests; t->name; t++) {
 		struct queue want;
 		struct avl tree;
-		int ret;
+		int i, ret;
 
 		ret = avl_init(&tree, cmp, NULL);
 		if (ret == -1)
@@ -55,6 +55,16 @@ int main(void)
 		ret = queue_init(&want, NULL);
 		if (ret == -1)
 			goto perr;
+		for (i = 0; i < t->size; i++) {
+			ret = avl_insert(&tree, &t->data[i]);
+			if (ret == -1)
+				goto perr;
+		}
+		if (avl_size(&tree) != t->want_size) {
+			fprintf(stderr, "%s: unexpected tree size:\n\t- want: %d\n\t-  got: %d\n",
+				t->name, t->want_size, avl_size(&tree));
+			goto err;
+		}
 		avl_destroy(&tree);
 		if (avl_size(&tree)) {
 			fprintf(stderr, "%s: unexpected final tree size:\n\t- want: 0\n\t-  got: %d\n",

@@ -1,5 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0 */
 #include <stdlib.h>
+#include <errno.h>
 #include "avl.h"
 
 static int default_cmp(const void *d1, const void *d2)
@@ -34,4 +35,29 @@ static void remove_tree(struct avl *tree, struct avl_node **node)
 void avl_destroy(struct avl *tree)
 {
 	remove_tree(tree, &tree->root);
+}
+
+static int insert_node(struct avl *tree, struct avl_node **root,
+		       const void *data)
+{
+	struct avl_node *node;
+
+	if (!*root) {
+		node = malloc(sizeof(*node));
+		if (!node)
+			return -1;
+		node->left = node->right = NULL;
+		node->factor = avl_balanced;
+		node->hidden = 0;
+		node->data = data;
+		*root = node;
+		return 0;
+	}
+	errno = EINVAL;
+	return -1;
+}
+
+int avl_insert(struct avl *tree, const void *data)
+{
+	return insert_node(tree, &tree->root, data);
 }
