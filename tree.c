@@ -20,21 +20,10 @@ int tree_init(struct tree *tree, int (*cmp)(const void *d1, const void *d2),
 	return 0;
 }
 
-static void destroy_subtree(struct tree_node *root, void (*dtor)(void *data))
-{
-	if (!root)
-		return;
-	destroy_subtree(root->left, dtor);
-	destroy_subtree(root->right, dtor);
-	dtor((void *)root->data);
-	free(root);
-}
-
 void tree_destroy(struct tree *tree)
 {
-	destroy_subtree(tree->root, tree->dtor);
+	tree_remove(tree, tree->root);
 	tree->root = NULL;
-	tree->size = 0;
 }
 
 int tree_ins_left(struct tree *tree, struct tree_node *node, const void *data)
@@ -85,4 +74,15 @@ int tree_ins_right(struct tree *tree, struct tree_node *node, const void *data)
 	*next = node;
 	tree->size++;
 	return 0;
+}
+
+void tree_remove(struct tree *tree, struct tree_node *node)
+{
+	if (!node)
+		return;
+	tree_remove(tree, node->left);
+	tree_remove(tree, node->right);
+	tree->dtor((void *)node->data);
+	free(node);
+	tree->size--;
 }
