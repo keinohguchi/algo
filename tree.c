@@ -22,8 +22,9 @@ int tree_init(struct tree *tree, int (*cmp)(const void *d1, const void *d2),
 
 void tree_destroy(struct tree *tree)
 {
-	tree_remove(tree, tree->root);
-	tree->root = NULL;
+	if (!tree_size(tree))
+		return;
+	tree_rem_left(tree, NULL);
 }
 
 int tree_ins_left(struct tree *tree, struct tree_node *node, const void *data)
@@ -76,13 +77,48 @@ int tree_ins_right(struct tree *tree, struct tree_node *node, const void *data)
 	return 0;
 }
 
-void tree_remove(struct tree *tree, struct tree_node *node)
+static void remove_tree(struct tree *tree, struct tree_node **node)
 {
-	if (!node)
+	if (!*node)
 		return;
-	tree_remove(tree, node->left);
-	tree_remove(tree, node->right);
-	tree->dtor((void *)node->data);
-	free(node);
+	remove_tree(tree, &(*node)->left);
+	remove_tree(tree, &(*node)->right);
+	tree->dtor((void *)(*node)->data);
+	free(*node);
+	*node = NULL;
 	tree->size--;
+}
+
+int tree_rem_left(struct tree *tree, struct tree_node *node)
+{
+	struct tree_node **sub;
+
+	if (node)
+		sub = &node->left;
+	else
+		sub = &tree->root;
+	if (!*sub) {
+		/* no left subtree */
+		errno = EINVAL;
+		return -1;
+	}
+	remove_tree(tree, sub);
+	return 0;
+}
+
+int tree_rem_right(struct tree *tree, struct tree_node *node)
+{
+	struct tree_node **sub;
+
+	if (node)
+		sub = &node->right;
+	else
+		sub = &tree->root;
+	if (!*sub) {
+		/* no right subtree */
+		errno = EINVAL;
+		return -1;
+	}
+	remove_tree(tree, sub);
+	return 0;
 }

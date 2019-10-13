@@ -236,6 +236,11 @@ static int test_tree()
 		}
 		queue_destroy(&want);
 		tree_destroy(&tree);
+		if (tree_size(&tree)) {
+			fprintf(stderr, "%s: unexpected final tree size:\n\t- want: 0\n\t-  got: %d\n",
+				t->name, tree_size(&tree));
+			goto err;
+		}
 		continue;
 perr:
 		perror(t->name);

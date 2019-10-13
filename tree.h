@@ -20,7 +20,8 @@ int tree_init(struct tree *tree, int (*cmp)(const void *d1, const void *d2),
 void tree_destroy(struct tree *tree);
 int tree_ins_left(struct tree *tree, struct tree_node *node, const void *data);
 int tree_ins_right(struct tree *tree, struct tree_node *node, const void *data);
-void tree_remove(struct tree *tree, struct tree_node *node);
+int tree_rem_left(struct tree *tree, struct tree_node *node);
+int tree_rem_right(struct tree *tree, struct tree_node *node);
 int tree_merge(struct tree *merge, struct tree *t1, struct tree *t2);
 static inline int tree_size(const struct tree *tree) { return tree->size; }
 
