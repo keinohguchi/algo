@@ -84,7 +84,7 @@ int hash_remove(struct hash *tbl, void **data)
 	return -1;
 }
 
-int hash_lookup(struct hash *tbl, void **data)
+int hash_lookup(const struct hash *tbl, void **data)
 {
 	int key = tbl->h(*data) % tbl->buckets;
 	struct hash_node *node;
@@ -94,6 +94,78 @@ int hash_lookup(struct hash *tbl, void **data)
 			*data = (void *)node->data;
 			return 0;
 		}
+	errno = EINVAL;
+	return -1;
+}
+
+/* vacated node placeholder for the search performance improvement */
+static char ohash_vacated;
+
+int ohash_init(struct ohash *tbl, int positions, int (*h1)(const void *key),
+	       int (*h2)(const void *key), int (*same)(const void *k1, const void *k2),
+	       void (*dtor)(void *data))
+{
+	void **table = malloc(sizeof(void *)*positions);
+	if (!table)
+		return -1;
+	tbl->vacated = &ohash_vacated;
+	tbl->positions = positions;
+	tbl->table = table;
+	tbl->size = 0;
+	tbl->h1 = h1 ? h1 : divisionby1699;
+	tbl->h2 = h2 ? h2 : divisionby1699;
+	tbl->same = same ? same : default_same;
+	tbl->dtor = dtor ? dtor : default_dtor;
+	return 0;
+}
+
+void ohash_destroy(struct ohash *tbl)
+{
+	int i;
+
+	for (i = 0; i < tbl->positions; i++)
+		tbl->dtor((void *)tbl->table[i]);
+	free(tbl->table);
+}
+
+int ohash_insert(struct ohash *tbl, const void *data)
+{
+	int i;
+
+	for (i = 0; i < tbl->positions; i++) {
+		int key = (tbl->h1(data) + i * tbl->h2(data)) % tbl->positions;
+		if (tbl->table[key] && tbl->table[key] != tbl->vacated) {
+			if (tbl->same(tbl->table[key], data))
+				return 1;
+			continue;
+		}
+		tbl->table[key] = (void *)data;
+		tbl->size++;
+		return 0;
+	}
+	errno = EINVAL;
+	return -1;
+}
+
+int ohash_remove(struct ohash *tbl, void **data)
+{
+	int i;
+
+	for (i = 0; i < tbl->positions; i++) {
+		int key = (tbl->h1(data) + i * tbl->h2(data)) % tbl->positions;
+		if (tbl->table[key] == tbl->vacated)
+			continue;
+		else if (tbl->table[key] == NULL) {
+			errno = EINVAL;
+			return -1;
+		}
+		if (tbl->same(tbl->table[key], data)) {
+			*data = tbl->table[key];
+			tbl->table[key] = NULL;
+			tbl->size--;
+			return 0;
+		}
+	}
 	errno = EINVAL;
 	return -1;
 }
