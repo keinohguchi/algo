@@ -1,5 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0 */
 #include <stdlib.h>
+#include <string.h>
 #include <errno.h>
 #include "hash.h"
 
@@ -24,6 +25,7 @@ int hash_init(struct hash *tbl, int buckets, int (*h)(const void *key),
 	table = malloc(sizeof(struct hash_node *)*buckets);
 	if (!table)
 		return -1;
+	memset(table, 0, sizeof(struct hash_node *)*buckets);
 	tbl->table = table;
 	tbl->buckets = buckets;
 	tbl->size = 0;
@@ -101,13 +103,15 @@ int hash_lookup(const struct hash *tbl, void **data)
 /* vacated node placeholder for the search performance improvement */
 static char ohash_vacated;
 
-int ohash_init(struct ohash *tbl, int positions, int (*h1)(const void *key),
-	       int (*h2)(const void *key), int (*same)(const void *k1, const void *k2),
+int ohash_init(struct ohash *tbl, int positions,
+	       int (*h1)(const void *key), int (*h2)(const void *key),
+	       int (*same)(const void *k1, const void *k2),
 	       void (*dtor)(void *data))
 {
 	void **table = malloc(sizeof(void *)*positions);
 	if (!table)
 		return -1;
+	memset(table, 0, sizeof(void *)*positions);
 	tbl->vacated = &ohash_vacated;
 	tbl->positions = positions;
 	tbl->table = table;
@@ -124,8 +128,14 @@ void ohash_destroy(struct ohash *tbl)
 	int i;
 
 	for (i = 0; i < tbl->positions; i++)
-		tbl->dtor((void *)tbl->table[i]);
+		if (tbl->table[i] && tbl->table[i] != tbl->vacated)
+			tbl->dtor((void *)tbl->table[i]);
 	free(tbl->table);
+}
+
+static int ohash_key(const struct ohash *tbl, const void *data, int i)
+{
+	return (tbl->h1(data) + i * tbl->h2(data)) % tbl->positions;
 }
 
 int ohash_insert(struct ohash *tbl, const void *data)
@@ -133,7 +143,7 @@ int ohash_insert(struct ohash *tbl, const void *data)
 	int i;
 
 	for (i = 0; i < tbl->positions; i++) {
-		int key = (tbl->h1(data) + i * tbl->h2(data)) % tbl->positions;
+		int key = ohash_key(tbl, data, i);
 		if (tbl->table[key] && tbl->table[key] != tbl->vacated) {
 			if (tbl->same(tbl->table[key], data))
 				return 1;
@@ -152,19 +162,34 @@ int ohash_remove(struct ohash *tbl, void **data)
 	int i;
 
 	for (i = 0; i < tbl->positions; i++) {
-		int key = (tbl->h1(data) + i * tbl->h2(data)) % tbl->positions;
-		if (tbl->table[key] == tbl->vacated)
+		int key = ohash_key(tbl, *data, i);
+		if (tbl->table[key] == NULL)
+			break;
+		else if (tbl->table[key] == tbl->vacated
+		    || !tbl->same(tbl->table[key], data))
 			continue;
-		else if (tbl->table[key] == NULL) {
-			errno = EINVAL;
-			return -1;
-		}
-		if (tbl->same(tbl->table[key], data)) {
-			*data = tbl->table[key];
-			tbl->table[key] = NULL;
-			tbl->size--;
-			return 0;
-		}
+		*data = tbl->table[key];
+		tbl->table[key] = tbl->vacated;
+		tbl->size--;
+		return 0;
+	}
+	errno = EINVAL;
+	return -1;
+}
+
+int ohash_lookup(const struct ohash *tbl, void **data)
+{
+	int i;
+
+	for (i = 0; i < tbl->positions; i++) {
+		int key = ohash_key(tbl, *data, i);
+		if (tbl->table[key] == NULL)
+			break;
+		else if (tbl->table[key] == tbl->vacated
+			 || !tbl->same(tbl->table[key], *data))
+			continue;
+		*data = tbl->table[key];
+		return 0;
 	}
 	errno = EINVAL;
 	return -1;
