@@ -1,10 +1,10 @@
-# Mastering Algorithms with C!
+# Mastering Algorithms with C
 
 [![CircleCI]](https://circleci.com/gh/keinohguchi/workflows/algo)
 
 [CircleCI]: https://circleci.com/gh/keinohguchi/workflows/algo
 
-## Programs
+## Examples
 
 - [factorial.c]: Factorial example
   - [factorial_test.c]: [factorial.c] unit test
@@ -22,6 +22,8 @@
   - [hash_test.c]: [hash.c] unit test
 - [tree.c]: Binary tree example
   - [tree_test.c]: [tree.c] unit test
+- [avl.c]: AVL tree example
+  - [avl_test.c]: [avl.c] unit test
 
 ## Tests
 
@@ -42,9 +44,10 @@ queue_test:     PASS
 set_test:       PASS
 hash_test:      PASS
 tree_test:      PASS
+avl_test:       PASS
 ```
 
-Happy Hacking!
+Happy hacking!
 
 [factorial.c]: factorial.c
 [factorial_test.c]: factorial_test.c
@@ -65,3 +68,5 @@ Happy Hacking!
 [hash_test.c]: hash_test.c
 [tree.c]: tree.c
 [tree_test.c]: tree_test.c
+[avl.c]: avl.c
+[avl_test.c]: avl_test.c

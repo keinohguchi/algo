@@ -4,9 +4,10 @@
 #include "tree.h"
 #include "queue.h"
 
-static int compare(const void *d1, const void *d2)
+static int cmp(const void *d1, const void *d2)
 {
-	return d1 - d2;
+	const int *i1 = d1, *i2 = d2;
+	return *i1 - *i2;
 }
 
 static int preorder(const struct tree_node *node, struct queue *q)
@@ -184,7 +185,7 @@ static int test_tree()
 		struct queue want;
 		int i, ret;
 
-		ret = tree_init(&tree, compare, NULL);
+		ret = tree_init(&tree, cmp, NULL);
 		if (ret == -1)
 			goto perr;
 		node = tree.root;
