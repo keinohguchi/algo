@@ -166,7 +166,7 @@ int ohash_remove(struct ohash *tbl, void **data)
 		if (tbl->table[key] == NULL)
 			break;
 		else if (tbl->table[key] == tbl->vacated
-		    || !tbl->same(tbl->table[key], data))
+		    || !tbl->same(tbl->table[key], *data))
 			continue;
 		*data = tbl->table[key];
 		tbl->table[key] = tbl->vacated;
