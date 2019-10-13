@@ -6,6 +6,7 @@ SRC	+= stack.c
 SRC	+= queue.c
 SRC	+= set.c
 SRC	+= hash.c
+SRC	+= tree.c
 ASM	:= $(patsubst %.c,%.s,$(SRC))
 OBJ	:= $(patsubst %.c,%.o,$(SRC))
 TEST	:= $(patsubst %.c,%_test,$(SRC))

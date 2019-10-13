@@ -20,6 +20,8 @@
   - [set_test.c]: [set.c] unit test
 - [hash.c]: Hash table example
   - [hash_test.c]: [hash.c] unit test
+- [tree.c]: Tree example
+  - [tree_test.c]: [tree.c] unit test
 
 ## Tests
 
@@ -60,3 +62,5 @@ Happy Hacking!
 [set_test.c]: set_test.c
 [hash.c]: hash.c
 [hash_test.c]: hash_test.c
+[tree.c]: tree.c
+[tree_test.c]: tree_test.c
