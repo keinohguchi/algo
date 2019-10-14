@@ -3,9 +3,9 @@
 #define _AVL_H
 
 enum avl_factor {
-	avl_left_heavy	= -1,
+	avl_left_heavy	= 1,
 	avl_balanced	= 0,
-	avl_right_heavy	= 1,
+	avl_right_heavy	= -1,
 };
 
 struct avl_node {
