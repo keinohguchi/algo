@@ -1,8 +1,8 @@
 # Mastering Algorithms with C
 
-[![CircleCI]](https://circleci.com/gh/keinohguchi/workflows/algo)
+[![CircleCI]](https://circleci.com/gh/keithnoguchi/workflows/algo)
 
-[CircleCI]: https://circleci.com/gh/keinohguchi/workflows/algo
+[CircleCI]: https://circleci.com/gh/keithnoguchi/workflows/algo
 
 ## Examples
 
