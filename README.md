@@ -47,6 +47,7 @@ set_test:       PASS
 hash_test:      PASS
 tree_test:      PASS
 avl_test:       PASS
+heap_test:      PASS
 ```
 
 Happy hacking!

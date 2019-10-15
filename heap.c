@@ -57,13 +57,14 @@ static int candidate(struct heap *heap, int i)
 
 static void bottomup(struct heap *heap)
 {
-	int i;
+	int i, j;
 
-	for (i = heap->size-1; i > 0; i--) {
+	for (i = heap->size-1; i > 0; i = j) {
 		/* heapified */
-		if (heap->cmp(heap->tree[parent(i)], heap->tree[i]) >= 0)
+		j = parent(i);
+		if (heap->cmp(heap->tree[j], heap->tree[i]) >= 0)
 			return;
-		swap(heap->tree, i, parent(i));
+		swap(heap->tree, i, j);
 	}
 }
 
