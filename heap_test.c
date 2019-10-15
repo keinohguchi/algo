@@ -23,7 +23,7 @@ int main(void)
 		int		size;
 		const int	data[8];
 		int		want_size;
-		const int	want_internal[8];
+		const int	want_raw[8];
 		const int	want[8];
 	} *t, tests[] = {
 		{
@@ -32,7 +32,7 @@ int main(void)
 			.size		= 2,
 			.data		= {1, 2},
 			.want_size	= 2,
-			.want_internal	= {1, 2},
+			.want_raw	= {1, 2},
 			.want		= {1, 2},
 		},
 		{
@@ -41,7 +41,7 @@ int main(void)
 			.size		= 2,
 			.data		= {1, 2},
 			.want_size	= 2,
-			.want_internal	= {2, 1},
+			.want_raw	= {2, 1},
 			.want		= {2, 1},
 		},
 		{
@@ -50,7 +50,7 @@ int main(void)
 			.size		= 2,
 			.data		= {2, 1},
 			.want_size	= 2,
-			.want_internal	= {1, 2},
+			.want_raw	= {1, 2},
 			.want		= {1, 2},
 		},
 		{
@@ -59,7 +59,7 @@ int main(void)
 			.size		= 2,
 			.data		= {2, 1},
 			.want_size	= 2,
-			.want_internal	= {2, 1},
+			.want_raw	= {2, 1},
 			.want		= {2, 1},
 		},
 		{
@@ -68,7 +68,7 @@ int main(void)
 			.size		= 3,
 			.data		= {1, 2, 3},
 			.want_size	= 3,
-			.want_internal	= {1, 2, 3},
+			.want_raw	= {1, 2, 3},
 			.want		= {1, 2, 3},
 		},
 		{
@@ -77,7 +77,7 @@ int main(void)
 			.size		= 3,
 			.data		= {1, 2, 3},
 			.want_size	= 3,
-			.want_internal	= {3, 1, 2},
+			.want_raw	= {3, 1, 2},
 			.want		= {3, 2, 1},
 		},
 		{
@@ -86,7 +86,7 @@ int main(void)
 			.size		= 3,
 			.data		= {3, 2, 1},
 			.want_size	= 3,
-			.want_internal	= {1, 3, 2},
+			.want_raw	= {1, 3, 2},
 			.want		= {1, 2, 3},
 		},
 		{
@@ -95,7 +95,7 @@ int main(void)
 			.size		= 3,
 			.data		= {3, 2, 1},
 			.want_size	= 3,
-			.want_internal	= {3, 2, 1},
+			.want_raw	= {3, 2, 1},
 			.want		= {3, 2, 1},
 		},
 		{
@@ -104,7 +104,7 @@ int main(void)
 			.size		= 4,
 			.data		= {1, 2, 3, 4},
 			.want_size	= 4,
-			.want_internal	= {1, 2, 3, 4},
+			.want_raw	= {1, 2, 3, 4},
 			.want		= {1, 2, 3, 4},
 		},
 		{
@@ -113,7 +113,7 @@ int main(void)
 			.size		= 4,
 			.data		= {1, 2, 3, 4},
 			.want_size	= 4,
-			.want_internal	= {4, 3, 2, 1},
+			.want_raw	= {4, 3, 2, 1},
 			.want		= {4, 3, 2, 1},
 		},
 		{
@@ -122,7 +122,7 @@ int main(void)
 			.size		= 4,
 			.data		= {4, 3, 2, 1},
 			.want_size	= 4,
-			.want_internal	= {1, 2, 3, 4},
+			.want_raw	= {1, 2, 3, 4},
 			.want		= {1, 2, 3, 4},
 		},
 		{
@@ -131,7 +131,7 @@ int main(void)
 			.size		= 4,
 			.data		= {4, 3, 2, 1},
 			.want_size	= 4,
-			.want_internal	= {4, 3, 2, 1},
+			.want_raw	= {4, 3, 2, 1},
 			.want		= {4, 3, 2, 1},
 		},
 		{
@@ -140,7 +140,7 @@ int main(void)
 			.size		= 5,
 			.data		= {1, 2, 3, 4, 5},
 			.want_size	= 5,
-			.want_internal	= {1, 2, 3, 4, 5},
+			.want_raw	= {1, 2, 3, 4, 5},
 			.want		= {1, 2, 3, 4, 5},
 		},
 		{
@@ -149,7 +149,7 @@ int main(void)
 			.size		= 5,
 			.data		= {1, 2, 3, 4, 5},
 			.want_size	= 5,
-			.want_internal	= {5, 4, 2, 1, 3},
+			.want_raw	= {5, 4, 2, 1, 3},
 			.want		= {5, 4, 3, 2, 1},
 		},
 		{
@@ -158,7 +158,7 @@ int main(void)
 			.size		= 5,
 			.data		= {5, 4, 3, 2, 1},
 			.want_size	= 5,
-			.want_internal	= {1, 2, 4, 5, 3},
+			.want_raw	= {1, 2, 4, 5, 3},
 			.want		= {1, 2, 3, 4, 5},
 		},
 		{
@@ -167,7 +167,7 @@ int main(void)
 			.size		= 5,
 			.data		= {5, 4, 3, 2, 1},
 			.want_size	= 5,
-			.want_internal	= {5, 4, 3, 2, 1},
+			.want_raw	= {5, 4, 3, 2, 1},
 			.want		= {5, 4, 3, 2, 1},
 		},
 		{
@@ -176,7 +176,7 @@ int main(void)
 			.size		= 6,
 			.data		= {1, 2, 3, 4, 5, 6},
 			.want_size	= 6,
-			.want_internal	= {1, 2, 3, 4, 5, 6},
+			.want_raw	= {1, 2, 3, 4, 5, 6},
 			.want		= {1, 2, 3, 4, 5, 6},
 		},
 		{
@@ -185,7 +185,7 @@ int main(void)
 			.size		= 6,
 			.data		= {1, 2, 3, 4, 5, 6},
 			.want_size	= 6,
-			.want_internal	= {6, 4, 5, 1, 3, 2},
+			.want_raw	= {6, 4, 5, 1, 3, 2},
 			.want		= {6, 5, 4, 3, 2, 1},
 		},
 		{
@@ -194,7 +194,7 @@ int main(void)
 			.size		= 6,
 			.data		= {6, 5, 4, 3, 2, 1},
 			.want_size	= 6,
-			.want_internal	= {1, 3, 2, 6, 4, 5},
+			.want_raw	= {1, 3, 2, 6, 4, 5},
 			.want		= {1, 2, 3, 4, 5, 6},
 		},
 		{
@@ -203,8 +203,80 @@ int main(void)
 			.size		= 6,
 			.data		= {6, 5, 4, 3, 2, 1},
 			.want_size	= 6,
-			.want_internal	= {6, 5, 4, 3, 2, 1},
+			.want_raw	= {6, 5, 4, 3, 2, 1},
 			.want		= {6, 5, 4, 3, 2, 1},
+		},
+		{
+			.name		= "ascending 7 inputs to ascending order heap",
+			.cmp		= ascending,
+			.size		= 7,
+			.data		= {1, 2, 3, 4, 5, 6, 7},
+			.want_size	= 7,
+			.want_raw	= {1, 2, 3, 4, 5, 6, 7},
+			.want		= {1, 2, 3, 4, 5, 6, 7},
+		},
+		{
+			.name		= "ascending 7 inputs to decending order heap",
+			.cmp		= decending,
+			.size		= 7,
+			.data		= {1, 2, 3, 4, 5, 6, 7},
+			.want_size	= 7,
+			.want_raw	= {7, 4, 6, 1, 3, 2, 5},
+			.want		= {7, 6, 5, 4, 3, 2, 1},
+		},
+		{
+			.name		= "decending 7 inputs to ascending order heap",
+			.cmp		= ascending,
+			.size		= 7,
+			.data		= {7, 6, 5, 4, 3, 2, 1},
+			.want_size	= 7,
+			.want_raw	= {1, 4, 2, 7, 5, 6, 3},
+			.want		= {1, 2, 3, 4, 5, 6, 7},
+		},
+		{
+			.name		= "decending 7 inputs to decending order heap",
+			.cmp		= decending,
+			.size		= 7,
+			.data		= {7, 6, 5, 4, 3, 2, 1},
+			.want_size	= 7,
+			.want_raw	= {7, 6, 5, 4, 3, 2, 1},
+			.want		= {7, 6, 5, 4, 3, 2, 1},
+		},
+		{
+			.name		= "ascending 8 inputs to ascending order heap",
+			.cmp		= ascending,
+			.size		= 8,
+			.data		= {1, 2, 3, 4, 5, 6, 7, 8},
+			.want_size	= 8,
+			.want_raw	= {1, 2, 3, 4, 5, 6, 7, 8},
+			.want		= {1, 2, 3, 4, 5, 6, 7, 8},
+		},
+		{
+			.name		= "ascending 8 inputs to decending order heap",
+			.cmp		= decending,
+			.size		= 8,
+			.data		= {1, 2, 3, 4, 5, 6, 7, 8},
+			.want_size	= 8,
+			.want_raw	= {8, 7, 6, 4, 3, 2, 5, 1},
+			.want		= {8, 7, 6, 5, 4, 3, 2, 1},
+		},
+		{
+			.name		= "decending 8 inputs to ascending order heap",
+			.cmp		= ascending,
+			.size		= 8,
+			.data		= {8, 7, 6, 5, 4, 3, 2, 1},
+			.want_size	= 8,
+			.want_raw	= {1, 2, 3, 5, 6, 7, 4, 8},
+			.want		= {1, 2, 3, 4, 5, 6, 7, 8},
+		},
+		{
+			.name		= "decending 8 inputs to decending order heap",
+			.cmp		= decending,
+			.size		= 8,
+			.data		= {8, 7, 6, 5, 4, 3, 2, 1},
+			.want_size	= 8,
+			.want_raw	= {8, 7, 6, 5, 4, 3, 2, 1},
+			.want		= {8, 7, 6, 5, 4, 3, 2, 1},
 		},
 		{.name = NULL},
 	};
@@ -229,9 +301,9 @@ int main(void)
 		}
 		for (i = 0; i < t->want_size; i++) {
 			int *got = heap.tree[i];
-			if (*got != t->want_internal[i]) {
-				fprintf(stderr, "%s: unexpected internal value[%d]:\n\t- want: %d\n\t-  got: %d\n",
-					t->name, i, t->want_internal[i], *got);
+			if (*got != t->want_raw[i]) {
+				fprintf(stderr, "%s: unexpected raw value[%d]:\n\t- want: %d\n\t-  got: %d\n",
+					t->name, i, t->want_raw[i], *got);
 				goto err;
 			}
 		}

@@ -73,12 +73,12 @@ static void topdown(struct heap *heap)
 	int i, j;
 
 	for (i = 0; left(i) < heap->size; i = j) {
+		/* pick the prefered child out of two */
 		j = candidate(heap, i);
-		heap->tree[i] = heap->tree[j];
+		if (heap->cmp(heap->tree[i], heap->tree[j]) >= 0)
+			return;
+		swap(heap->tree, i, j);
 	}
-	/* shift the right child to the left to fill the gap */
-	if (i+2 == heap->size)
-		heap->tree[i] = heap->tree[i+1];
 }
 
 int heap_insert(struct heap *heap, const void *data)
@@ -102,7 +102,7 @@ int heap_extract(struct heap *heap, void **data)
 		return -1;
 	}
 	*data = heap->tree[0];
+	heap->tree[0] = heap->tree[--heap->size];
 	topdown(heap);
-	heap->size--;
 	return 0;
 }
