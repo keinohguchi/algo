@@ -75,6 +75,9 @@ static void topdown(struct heap *heap)
 		j = candidate(heap, i);
 		heap->tree[i] = heap->tree[j];
 	}
+	/* shift the right child to the left to fill the gap */
+	if (i+2 == heap->size)
+		heap->tree[i] = heap->tree[i+1];
 }
 
 int heap_insert(struct heap *heap, const void *data)
