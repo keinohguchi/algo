@@ -24,6 +24,8 @@
   - [tree_test.c]: [tree.c] unit test
 - [avl.c]: AVL tree example
   - [avl_test.c]: [avl.c] unit test
+- [heap.c]: Heap/Priority queue example
+  - [heap_test.c]: [heap.c] unit test
 
 ## Tests
 
@@ -70,3 +72,5 @@ Happy hacking!
 [tree_test.c]: tree_test.c
 [avl.c]: avl.c
 [avl_test.c]: avl_test.c
+[heap.c]: heap.c
+[heap_test.c]: heap_test.c
