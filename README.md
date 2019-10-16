@@ -2,7 +2,7 @@
 
 [![CircleCI]](https://circleci.com/gh/keithnoguchi/workflows/algo)
 
-[CircleCI]: https://circleci.com/gh/keithnoguchi/workflows/algo
+[CircleCI]: https://circleci.com/gh/keithnoguchi/algo.svg?style=svg
 
 ## Examples
 
