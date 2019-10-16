@@ -1,5 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0 */
 #include <stdlib.h>
+#include <errno.h>
 #include "set.h"
 #include "graph.h"
 
@@ -57,15 +58,48 @@ int graph_ins_vertex(struct graph *g, const void *data)
 
 int graph_rem_vertex(struct graph *g, void **data)
 {
-	struct graph_vertex *v;
+	struct graph_vertex *v, **prev = &g->vertices;
 
-	for (v = g->vertices; v; v = v->next)
+	for (v = g->vertices; v; prev = &v, v = v->next)
 		if (g->same(v->data, *data)) {
-			*data = (void *)v->data;
 			set_destroy(&v->adjlist);
+			*data = (void *)v->data;
+			*prev = v->next;
 			free(v);
 			g->vcount--;
 			return 0;
 		}
+	return -1;
+}
+
+int graph_ins_edge(struct graph *g, const void *d1, const void *d2)
+{
+	struct graph_vertex *v;
+
+	for (v = g->vertices; v; v = v->next)
+		if (g->same(v->data, d1)) {
+			int ret = set_insert(&v->adjlist, d2);
+			if (ret == 0)
+				g->ecount++;
+			return ret;
+		}
+	/* no vertex for d1 yet */
+	errno = EINVAL;
+	return -1;
+}
+
+int graph_rem_edge(struct graph *g, const void *d1, void **d2)
+{
+	struct graph_vertex *v;
+
+	for (v = g->vertices; v; v = v->next)
+		if (g->same(v->data, d1)) {
+			int ret = set_remove(&v->adjlist, d2);
+			if (ret == 0)
+				g->ecount--;
+			return ret;
+		}
+	/* no vertex for d1 yet */
+	errno = EINVAL;
 	return -1;
 }

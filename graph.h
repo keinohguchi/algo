@@ -31,5 +31,7 @@ static inline struct graph_vertex *graph_vertices(const struct graph *g)
 {
 	return g->vertices;
 }
+static inline int graph_vcount(const struct graph *g) { return g->vcount; }
+static inline int graph_ecount(const struct graph *g) { return g->ecount; }
 
 #endif /* _GRAPH_H */

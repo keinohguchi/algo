@@ -13,9 +13,9 @@ int main(void)
 {
 	const struct test {
 		const char			*const name;
-		int				size;
+		int				vertices_size;
 		int				vertices[8];
-		int				edge_size;
+		int				edges_size;
 		struct edge { int from, to; } 	edges[16];
 		int				start;
 		int				want_vcount;
@@ -25,9 +25,9 @@ int main(void)
 	} *t, tests[] = {
 		{
 			.name		= "two vertices, directly connected",
-			.size		= 2,
+			.vertices_size	= 2,
 			.vertices	= {1, 2},
-			.edge_size	= 1,
+			.edges_size	= 1,
 			.edges		= {{1, 2}},
 			.start		= 1,
 			.want_vcount	= 2,
@@ -37,9 +37,9 @@ int main(void)
 		},
 		{
 			.name		= "two vertices, not connected",
-			.size		= 2,
+			.vertices_size	= 2,
 			.vertices	= {1, 2},
-			.edge_size	= 1,
+			.edges_size	= 1,
 			.edges		= {{1, 2}},
 			.start		= 2,
 			.want_vcount	= 2,
@@ -58,15 +58,54 @@ int main(void)
 		ret = graph_init(&g, same, NULL);
 		if (ret == -1)
 			goto perr;
-		for (i = 0; i < t->size; i++) {
+		for (i = 0; i < t->vertices_size; i++) {
 			ret = graph_ins_vertex(&g, &t->vertices[i]);
 			if (ret == -1)
 				goto perr;
+		}
+		for (i = 0; i < t->edges_size; i++) {
+			ret = graph_ins_edge(&g, &t->edges[i].from,
+					     &t->edges[i].to);
+			if (ret == -1)
+				goto perr;
+		}
+		if (graph_vcount(&g) != t->want_vcount) {
+			fprintf(stderr, "%s: unexpected vertex count:\n\t- want: %d\n\t-  got: %d\n",
+				t->name, t->want_vcount, graph_vcount(&g));
+			goto err;
+		}
+		if (graph_ecount(&g) != t->want_ecount) {
+			fprintf(stderr, "%s: unexpected edge count:\n\t- want: %d\n\t-  got: %d\n",
+				t->name, t->want_ecount, graph_ecount(&g));
+			goto err;
+		}
+		for (i = 0; i < t->edges_size; i++) {
+			int *got = (int *)&t->edges[i].to;
+			ret = graph_rem_edge(&g, &t->edges[i].from, (void **)&got);
+			if (ret == -1)
+				goto perr;
+		}
+		for (i = 0; i < t->vertices_size; i++) {
+			int *got = (int *)&t->vertices[i];
+			ret = graph_rem_vertex(&g, (void **)&got);
+			if (ret == -1)
+				goto perr;
+		}
+		if (graph_vcount(&g)) {
+			fprintf(stderr, "%s: unexpected final vertex count:\n\t- want: 0\n\t-  got: %d\n",
+				t->name, graph_vcount(&g));
+			goto err;
+		}
+		if (graph_ecount(&g)) {
+			fprintf(stderr, "%s: unexpected final edge count:\n\t- want: 0\n\t-  got: %d\n",
+				t->name, graph_ecount(&g));
+			goto err;
 		}
 		graph_destroy(&g);
 		continue;
 perr:
 		perror(t->name);
+err:
 		fail++;
 	}
 	if (fail)
