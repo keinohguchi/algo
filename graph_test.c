@@ -3,49 +3,55 @@
 #include <stdlib.h>
 #include "graph.h"
 
+struct vertex {
+	enum color { white, gray, black }	color;
+	int					data;
+	int					hops;
+};
+
 static int same(const void *d1, const void *d2)
 {
-	const int *i1 = d1, *i2 = d2;
-	return *i1 == *i2;
+	const struct vertex *v1 = d1, *v2 = d2;
+	return v1->data == v2->data;
 }
 
 int main(void)
 {
 	const struct test {
-		const char			*const name;
-		int				vertices_size;
-		int				vertices[8];
-		int				edges_size;
-		struct edge { int from, to; } 	edges[16];
-		int				start;
-		int				want_vcount;
-		int				want_ecount;
-		int				want_path_size;
-		int				want_path[16];
+		const char					*const name;
+		int						vertices_size;
+		struct vertex					vertices[8];
+		int						edges_size;
+		struct edge { struct vertex from, to; } 	edges[16];
+		int						want_vcount;
+		int						want_ecount;
+		struct path { struct vertex from, to; }		path;
+		int						want_path_size;
+		int						want_path[16];
 	} *t, tests[] = {
 		{
-			.name		= "two vertices, directly connected",
+			.name		= "two vertices directed graph, 1 -> 2",
 			.vertices_size	= 2,
-			.vertices	= {1, 2},
+			.vertices	= {{.data = 1}, {.data = 2}},
 			.edges_size	= 1,
-			.edges		= {{1, 2}},
-			.start		= 1,
+			.edges		= {{{.data = 1}, {.data = 2}}},
 			.want_vcount	= 2,
 			.want_ecount	= 1,
+			.path		= {{.data = 1}, {.data = 2}},
 			.want_path_size	= 2,
 			.want_path	= {1, 2},
 		},
 		{
-			.name		= "two vertices, not connected",
+			.name		= "two vertices directed graph, 1 <- 2",
 			.vertices_size	= 2,
-			.vertices	= {1, 2},
+			.vertices	= {{.data = 1}, {.data = 2}},
 			.edges_size	= 1,
-			.edges		= {{1, 2}},
-			.start		= 2,
+			.edges		= {{{.data = 1}, {.data = 2}}},
 			.want_vcount	= 2,
 			.want_ecount	= 1,
-			.want_path_size	= 0,
-			.want_path	= {},
+			.path		= {{.data = 2}, {.data = 1}},
+			.want_path_size	= 1,
+			.want_path	= {2},
 		},
 		{.name = NULL},
 	};
@@ -80,13 +86,13 @@ int main(void)
 			goto err;
 		}
 		for (i = 0; i < t->edges_size; i++) {
-			int *got = (int *)&t->edges[i].to;
+			struct vertex *got = (struct vertex *)&t->edges[i].to;
 			ret = graph_rem_edge(&g, &t->edges[i].from, (void **)&got);
 			if (ret == -1)
 				goto perr;
 		}
 		for (i = 0; i < t->vertices_size; i++) {
-			int *got = (int *)&t->vertices[i];
+			struct vertex *got = (struct vertex *)&t->vertices[i];
 			ret = graph_rem_vertex(&g, (void **)&got);
 			if (ret == -1)
 				goto perr;
