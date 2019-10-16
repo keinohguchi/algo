@@ -6,8 +6,8 @@
 
 struct graph_vertex {
 	struct graph_vertex	*next;
-	void			*data;
-	struct set		*adjlist;
+	const void		*data;
+	struct set		adjlist;
 };
 
 struct graph {
