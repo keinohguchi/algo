@@ -26,6 +26,8 @@
   - [avl_test.c]: [avl.c] unit test
 - [heap.c]: Heap/Priority queue example
   - [heap_test.c]: [heap.c] unit test
+- [graph.c]: Graph example
+  - [graph_test.c]: [graph.c] unit test
 
 ## Tests
 
@@ -75,3 +77,5 @@ Happy hacking!
 [avl_test.c]: avl_test.c
 [heap.c]: heap.c
 [heap_test.c]: heap_test.c
+[graph.c]: graph.c
+[graph_test.c]: graph_test.c
